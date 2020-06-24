@@ -52,19 +52,29 @@ public class CategoryController {
         return findCategory.getMovie();
     }
 
-    @DeleteMapping("/{categoryId}")
-    public void deleteCategory(@PathVariable int categoryId) {
+    @DeleteMapping("/{categoryId}/movie/{movieId}")
+    public void deleteCategory(@PathVariable int categoryId, @PathVariable int movieId){
         Category findCategory =  categoryRepo.findById(categoryId).get();
+
+        Movie findMovie = movieRepo.findById(movieId).get();
 
         findCategory.getMovie().forEach(movies -> {
             List<Category> movieCategory = movies.getCategory();
             movieCategory.remove(findCategory);
             movieRepo.save(movies);
+
         });
 
+        findMovie.getCategory().forEach(category -> {
+            List<Movie> movieCategory = category.getMovie();
+            movieCategory.remove(findMovie);
+            categoryRepo.save(category);
+        });
+
+        // findMovie.setCategory(null);
         findCategory.setMovie(null);
 
-        categoryRepo.deleteById(categoryId);
+        // categoryRepo.deleteById(categoryId);
     }
 
     @PutMapping

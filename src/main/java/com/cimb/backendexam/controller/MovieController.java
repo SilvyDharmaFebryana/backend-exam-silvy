@@ -68,7 +68,36 @@ public class MovieController {
     }
 
 
-    @DeleteMapping("/{id}")
+
+    // putusin hubungannya si category dan movie di mov_cat
+    @DeleteMapping("/{id}/category/{categoryId}") 
+    public void deleteMovieCategory(@PathVariable int id, @PathVariable int categoryId) {
+
+        Movie findMovie = movieRepo.findById(id).get();
+
+        Category findCategory = categoryRepo.findById(categoryId).get();
+
+        findMovie.getCategory().forEach(category -> {
+            List<Movie> movieCategory = category.getMovie();
+            movieCategory.remove(findMovie);
+            categoryRepo.save(category);
+        });
+
+        findCategory.getMovie().forEach(movie -> {
+            List<Category> moviCategories = movie.getCategory();
+            moviCategories.remove(findCategory);
+            movieRepo.save(movie);
+        });
+
+        // findMovie.setCategory(null);
+        findCategory.setMovie(null);
+        // movieRepo.deleteById(id);
+        // return "has been deleted";
+
+    }
+
+
+    @DeleteMapping("/{id}") 
     public void deleteMovie(@PathVariable int id) {
 
         Movie findMovie = movieRepo.findById(id).get();
@@ -79,8 +108,8 @@ public class MovieController {
             categoryRepo.save(category);
         });
 
-        findMovie.setCategory(null);
         movieRepo.deleteById(id);
+
 
     }
 
