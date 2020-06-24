@@ -77,6 +77,23 @@ public class CategoryController {
         // categoryRepo.deleteById(categoryId);
     }
 
+
+    @DeleteMapping("/{categoryId}")
+    public void deleteCategory(@PathVariable int categoryId){
+        Category findCategory =  categoryRepo.findById(categoryId).get();
+
+        findCategory.getMovie().forEach(movies -> {
+            List<Category> movieCategory = movies.getCategory();
+            movieCategory.remove(findCategory);
+            movieRepo.save(movies);
+
+        });
+    
+        findCategory.setMovie(null);
+        categoryRepo.deleteById(categoryId);
+    }
+
+
     @PutMapping
     public Category updateCategory(@RequestBody Category category) {
 

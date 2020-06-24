@@ -110,7 +110,6 @@ public class MovieController {
 
         movieRepo.deleteById(id);
 
-
     }
 
     
